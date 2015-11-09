@@ -2,7 +2,7 @@ Implementations
 ===============
 
 .. toctree::
-    :maxdepth: 1
+   :maxdepth: 2
 
-       implementations/php
-       implementations/gearman
+   implementations/php
+   implementations/gearman

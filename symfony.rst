@@ -2,7 +2,7 @@ Symfony Bundles
 ===============
 
 .. toctree::
-    :maxdepth: 1
+   :maxdepth: 2
 
    bundles/TaskBundle
    bundles/PHPTaskBundle
