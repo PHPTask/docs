@@ -1,17 +1,16 @@
-.. php-task documentation master file, created by
-   sphinx-quickstart on Mon Nov  9 18:34:28 2015.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 Welcome to php-task's documentation!
 ====================================
+
+This is the documentation for the php-task library.
 
 Contents:
 
 .. toctree::
    :maxdepth: 2
 
-
+   introduction
+   symfony
+   api
 
 Indices and tables
 ==================
