@@ -63,37 +63,19 @@ This example will assume you want to generate thumbnail images.
             /* create the physical thumbnail image to its destination */
             imagejpeg($virtualImage, $destinationImagePath);
         }
-
-        /**
-         * {@inheritdoc}
-         */
-        public function getNamespace()
-        {
-            return 'app';
-        }
-
-        /**
-         * {@inheritdoc}
-         */
-        public function getName()
-        {
-            return 'image_resize';
-        }
     }
 
     // bootstrap
-
-    $namingFactory = new Task\Naming\NamingFactory();
     $taskStorage = new Task\PHP\ArrayStorage\TaskStorage();
-    $taskRunner = new Task\PHP\TaskRunner($taskStorage, $namingFactory);
+    $taskRunner = new Task\PHP\TaskRunner($taskStorage);
     $scheduler = new Task\PHP\Scheduler($taskStorage, $taskRunner);
 
     // add worker instances
-    $taskRunner->addWorker(new ImageResizeWorker());
+    $taskRunner->addWorker('app', 'image_resize', new ImageResizeWorker());
 
     // schedule task
-    $scheduler->schedule(new Task\Scheduler\Task('app.image_resize', ['example-1.jpg', 'thumbnails/example-1.jpg', 100]));
-    $scheduler->schedule(new Task\Scheduler\Task('app.image_resize', ['example-2.jpg', 'thumbnails/example-2.jpg', 100]));
+    $scheduler->schedule('app.image_resize', new Task\Scheduler\Task(['example-1.jpg', 'thumbnails/example-1.jpg', 100]));
+    $scheduler->schedule('app.image_resize', new Task\Scheduler\Task(['example-2.jpg', 'thumbnails/example-2.jpg', 100]));
 
     // run task
     $taskRunner->run();
