@@ -35,8 +35,6 @@ This example will assume you want to generate thumbnail images.
 
     <?php
 
-    use Task\Scheduler\TaskInterface;
-
     class ImageResizeWorker implements Task\TaskRunner\WorkerInterface
     {
         /**
@@ -67,15 +65,26 @@ This example will assume you want to generate thumbnail images.
 
     // bootstrap
     $taskStorage = new Task\PHP\ArrayStorage\TaskStorage();
+    $eventDispatcher = new Symfony\Component\EventDispatcher\EventDispatcher();
     $taskRunner = new Task\PHP\TaskRunner($taskStorage);
-    $scheduler = new Task\PHP\Scheduler($taskStorage, $taskRunner);
+    $scheduler = new Task\PHP\Scheduler($taskStorage, $eventDispatcher);
+
+    // event listener
+    $eventListener = new Task\PHP\RunListener($taskRunner);
+    $eventDispatcher->addListener(Task\PHP\Events::RUN, [$eventListener, 'onRun']);
 
     // add worker instances
     $taskRunner->addWorker('app', 'image_resize', new ImageResizeWorker());
 
     // schedule task
-    $scheduler->schedule('app.image_resize', new Task\Scheduler\Task(['example-1.jpg', 'thumbnails/example-1.jpg', 100]));
-    $scheduler->schedule('app.image_resize', new Task\Scheduler\Task(['example-2.jpg', 'thumbnails/example-2.jpg', 100]));
+    $scheduler->schedule(
+        'app.image_resize',
+        new Task\Scheduler\Task([__DIR__ . '/images/example-1.jpg', __DIR__ . '/images/thumbnails/example-1.jpg', 100])
+    );
+    $scheduler->schedule(
+        'app.image_resize',
+        new Task\Scheduler\Task([__DIR__ . '/images/example-2.jpg', __DIR__ . '/images/thumbnails/example-2.jpg', 100])
+    );
 
     // run task
     $taskRunner->run();
