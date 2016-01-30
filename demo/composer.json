@@ -1,0 +1,15 @@
+{
+    "name": "php-task/demo",
+    "type": "demo",
+    "require": {
+        "php-task/task-bundle": "1.0.x-dev@dev",
+        "php-task/php-task": "@dev"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Johannes Wachter",
+            "email": "johannes.wachter@massiveart.at"
+        }
+    ]
+}

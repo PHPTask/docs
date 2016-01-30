@@ -5,44 +5,33 @@ to handle synchronous and asynchronous tasks in PHP.
 
 What it does
 ------------
-It allows to implement worker classes in PHP for tasks. These worker
+It allows to implement handler classes in PHP for tasks. These handler
 can be implemented in your favorite environment. Over a simple
 interface the developer can define and schedule long running tasks
 without any overhead.
 
 One typical usecase is generating thumbnails or rendering videos.
-These tasks are to long to run them immediately. These task can be
-done after generating the response to the user.
-
-How it works
-------------
-The php-task library provides two ways to schedule tasks:
-
-* Gearman_: A generic application framework for farming out work
-  to multiple machines or processes.
-* `PHP Implementation`_: A implementation of the php-task library
-  in raw PHP.
+These tasks are to long to run them immediately and can be done after
+generating the response to the user.
 
 Quick Example
 -------------
 This example will assume you want to generate thumbnail images.
 
-.. note::
-
-    The example uses the raw PHP implementation for php-task.
-
 .. code-block:: php
 
     <?php
 
-    class ImageResizeWorker implements Task\TaskRunner\WorkerInterface
+    include __DIR__ . '/vendor/autoload.php';
+
+    class ImageResizeHandler implements Task\Handler\HandlerInterface
     {
         /**
          * {@inheritdoc}
          */
-        public function run(Task\Scheduler\TaskInterface $task)
+        public function handle($workload)
         {
-            list($sourceImagePath, $destinationImagePath, $desiredWidth) = $task->getWorkload();
+            list($sourceImagePath, $destinationImagePath, $desiredWidth) = $workload;
 
             /* read the source image */
             $sourceImage = imagecreatefromjpeg($sourceImagePath);
@@ -60,37 +49,42 @@ This example will assume you want to generate thumbnail images.
 
             /* create the physical thumbnail image to its destination */
             imagejpeg($virtualImage, $destinationImagePath);
+
+            return $destinationImagePath;
         }
     }
 
     // bootstrap
-    $taskStorage = new Task\PHP\ArrayStorage\TaskStorage();
+    $storage = new Task\Storage\ArrayStorage();
+    $registry = new Task\Handler\Registry();
+    $taskBuilderFactory = new Task\TaskBuilderFactory();
     $eventDispatcher = new Symfony\Component\EventDispatcher\EventDispatcher();
-    $taskRunner = new Task\PHP\TaskRunner($taskStorage);
-    $scheduler = new Task\PHP\Scheduler($taskStorage, $eventDispatcher);
+    $scheduler = new Task\Scheduler($storage, $registry, $taskBuilderFactory, $eventDispatcher);
 
-    // event listener
-    $eventListener = new Task\PHP\RunListener($taskRunner);
-    $eventDispatcher->addListener(Task\PHP\Events::RUN, [$eventListener, 'onRun']);
+    // register handler
+    $registry->add('iapp.mage_resize', new ImageResizeHandler());
 
-    // add worker instances
-    $taskRunner->addWorker('app', 'image_resize', new ImageResizeWorker());
-
-    // schedule task
-    $scheduler->schedule(
+    // schedule task one
+    $scheduler->createTask(
         'app.image_resize',
-        new Task\Scheduler\Task([__DIR__ . '/images/example-1.jpg', __DIR__ . '/images/thumbnails/example-1.jpg', 100])
-    );
-    $scheduler->schedule(
+        [__DIR__ . '/images/example-1.jpg', __DIR__ . '/images/thumbnails/example-1.jpg', 100]
+    )->schedule();
+
+    // scheduel task twos
+    $scheduler->createTask(
         'app.image_resize',
-        new Task\Scheduler\Task([__DIR__ . '/images/example-2.jpg', __DIR__ . '/images/thumbnails/example-2.jpg', 100])
-    );
+        [__DIR__ . '/images/example-2.jpg', __DIR__ . '/images/thumbnails/example-2.jpg', 100]
+    )->schedule();
 
-    // run task
-    $taskRunner->run();
+    // run tasks
+    $scheduler->run();
 
-The example will generate two thumbnail image one for the jpg ``example-1.jpg``
+The example will generate two thumbnail images one for the jpg ``example-1.jpg``
 and one for ``example-2.jpg`` both in the folder thumbnails.
+
+.. note::
+
+    You find the `complete source-code`_ for this example here
 
 Integration
 -----------
@@ -99,3 +93,4 @@ The library provides a integration into Symfony_ framework (see :doc:`symfony`).
 .. _Gearman: http://gearman.org
 .. _PHP Implementation: https://github.com/php-task/php
 .. _Symfony: http://symfony.com/
+.. _complete source-code: https://github.com/php-task/docs/tree/master/demo
