@@ -2,7 +2,7 @@
 
 include __DIR__ . '/vendor/autoload.php';
 
-class ImageResizeHandler implements Task\Handler\HandlerInterface
+class ImageResizeHandler implements Task\Handler\TaskHandlerInterface
 {
     /**
      * {@inheritdoc}
@@ -32,27 +32,30 @@ class ImageResizeHandler implements Task\Handler\HandlerInterface
     }
 }
 
-// bootstrap
-$storage = new Task\Storage\ArrayStorage();
-$registry = new Task\Handler\Registry();
-$taskBuilderFactory = new Task\TaskBuilderFactory();
-$eventDispatcher = new Symfony\Component\EventDispatcher\EventDispatcher();
-$scheduler = new Task\Scheduler($storage, $registry, $taskBuilderFactory, $eventDispatcher);
+// storage
+$taskRepository = new Task\Storage\ArrayStorage\ArrayTaskRepository();
+$taskExecutionRepository = new Task\Storage\ArrayStorage\ArrayTaskExecutionRepository();
 
-// register handler
-$registry->add('app.image_resize', new ImageResizeHandler());
+// utility
+$eventDispatcher = new Symfony\Component\EventDispatcher\EventDispatcher();
+$taskHandlerFactory = new Task\Handler\TaskHandlerFactory();
+$factory = new Task\Builder\TaskBuilderFactory();
+
+// core components
+$scheduler = new Task\Scheduler\TaskScheduler($factory, $taskRepository, $taskExecutionRepository, $eventDispatcher);
+$runner = new Task\Runner\TaskRunner($taskExecutionRepository, $taskHandlerFactory, $eventDispatcher);
 
 // schedule task one
 $scheduler->createTask(
-    'app.image_resize',
+    ImageResizeHandler::class,
     [__DIR__ . '/images/example-1.jpg', __DIR__ . '/images/thumbnails/example-1.jpg', 100]
 )->schedule();
 
 // scheduel task twos
 $scheduler->createTask(
-    'app.image_resize',
+    ImageResizeHandler::class,
     [__DIR__ . '/images/example-2.jpg', __DIR__ . '/images/thumbnails/example-2.jpg', 100]
 )->schedule();
 
 // run tasks
-$scheduler->run();
+$runner->runTasks();

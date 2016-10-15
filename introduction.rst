@@ -8,11 +8,12 @@ What it does
 It allows to implement handler classes in PHP for tasks. These handler
 can be implemented in your favorite environment. Over a simple
 interface the developer can define and schedule long running tasks
-without any overhead.
+without any overhead for the user of the application.
 
-One typical usecase is generating thumbnails or rendering videos.
-These tasks are to long to run them immediately and can be done after
-generating the response to the user.
+One typical usecase is generating thumbnails, rendering videos or
+update statistics of big data amount. These tasks are to long to run
+them immediately and can be done after sending the response to the
+user.
 
 Quick Example
 -------------
