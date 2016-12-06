@@ -6,7 +6,7 @@ Features
 --------
 Additional features which are implemented in this bundle.
 
-* Handler discovery
+* Handler discovery (over ``task.handler``-tag)
 * Different run possibilities
 * Different commands to manage and debug commands
 * Persist tasks and executions in database
