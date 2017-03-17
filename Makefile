@@ -190,3 +190,8 @@ pseudoxml:
 	$(SPHINXBUILD) -b pseudoxml $(ALLSPHINXOPTS) $(BUILDDIR)/pseudoxml
 	@echo
 	@echo "Build finished. The pseudo-XML files are in $(BUILDDIR)/pseudoxml."
+
+ditaa:
+	ditaa img/state-machine.ditaa -o -S -E
+	@echo
+	@echo "Build finished. The image files files are in img"
