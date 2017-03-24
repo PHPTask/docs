@@ -66,9 +66,9 @@ a ``workload``). This tasks can be scheduled with the following command.
             my-task:
                 enabled:              true
                 handler_class:        'AppBundle\Handler\TestHandler'
-                cron_expression:      '@daily
+                cron_expression:      '@daily'
 
-.. code-block::
+.. code-block:: bash
 
    bin/console task:schedule:system-tasks
 
