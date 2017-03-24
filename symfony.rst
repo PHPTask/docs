@@ -11,6 +11,7 @@ Additional features which are implemented in this bundle.
 * Different commands to manage and debug commands
 * Persist tasks and executions in database
 * Run statistics foreach execution of tasks
+* Predefined system-tasks
 
 Installation
 ------------
@@ -51,15 +52,50 @@ tasks.
    This option only works if you enable the storage in doctrine which will
    persist your tasks in a table-structure.
 
+System-Tasks
+------------
+
+System-tasks can be used to predefine tasks for deployment. The developer
+can define which handler will be called (with an ``cron_expression`` and
+a ``workload``). This tasks can be scheduled with the following command.
+
+.. code-block:: yaml
+
+    task:
+        system_tasks:
+            my-task:
+                enabled:              true
+                handler_class:        'AppBundle\Handler\TestHandler'
+                cron_expression:      '@daily'
+
+.. code-block:: bash
+
+   bin/console task:schedule:system-tasks
+
+Already scheduled system-tasks can be disabled in the configuration. But
+bigger changes like changing the ``handler_class`` are currently not
+supported.
+
+After addition or changing in the config you have to run the command again
+to be sure that the task-table will be updated.
+
 Configuration Reference
 -----------------------
 
 .. code-block:: yaml
 
-   task:
-      storage: array # One of "array" or "doctrine"
-      run:
-         mode: 'off' # One of "off" or "listener"
+    task:
+        storage:              doctrine # One of "array"; "doctrine"
+        adapters:
+            doctrine:
+                clear:                true
+        run:
+            mode:                 'off' # One of "off"; "listener"
+        system_tasks:
+            enabled:              true
+            handler_class:        ~
+            workload:             null
+            cron_expression:      ~
 
 .. _fastcgi_finish_request: http://php.net/manual/en/function.fastcgi-finish-request.php
 .. _PHP FPM: http://php.net/manual/en/install.fpm.php
