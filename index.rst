@@ -30,6 +30,7 @@ Contents
     :maxdepth: 2
 
     components
+    locking
     quick-example
     symfony
 
