@@ -81,7 +81,7 @@ to be sure that the task-table will be updated.
 
 Locking
 -------
-Locking is used to avoid concurrency problems when multiple task-runner runs at
+Locking is used to avoid concurrency problems when multiple task-runners run at
 the same time (see :doc:`locking`). This feature has to be enabled and will have
 multiple different storages in the future.
 
@@ -105,7 +105,14 @@ Configuration Reference
             storages:
                 file:
                     directory:    '%kernel.cache_dir%/tasks'
-        mode:                     'off' # One of "off"; "listener"
+        system_tasks:
+
+            # Prototype
+            -
+                enabled:          true
+                handler_class:    ~
+                workload:         null
+                cron_expression:  ~
 
 
 .. _fastcgi_finish_request: http://php.net/manual/en/function.fastcgi-finish-request.php

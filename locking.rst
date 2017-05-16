@@ -1,7 +1,7 @@
 Locking
 =======
-To avoid concurrency issue the library is able to lock other executions which
-would run at the same time. This could happen if multiple worker (e.g. cronjobs)
+To avoid concurrency issues, the library is able to lock other executions which
+would run at the same time. This could happen if multiple workers (e.g. cronjobs)
 run at the same time.
 
 Each ``TaskHandler`` decides if and how many other Tasks will be blocked while a
