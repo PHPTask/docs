@@ -12,6 +12,7 @@ Additional features which are implemented in this bundle.
 * Persist tasks and executions in database
 * Run statistics foreach execution of tasks
 * Predefined system-tasks
+* Locking mechanism to avoid concurrency problems
 
 Installation
 ------------
@@ -54,7 +55,6 @@ tasks.
 
 System-Tasks
 ------------
-
 System-tasks can be used to predefine tasks for deployment. The developer
 can define which handler will be called (with an ``cron_expression`` and
 a ``workload``). This tasks can be scheduled with the following command.
@@ -79,23 +79,41 @@ supported.
 After addition or changing in the config you have to run the command again
 to be sure that the task-table will be updated.
 
+Locking
+-------
+Locking is used to avoid concurrency problems when multiple task-runners run at
+the same time (see :doc:`locking`). This feature has to be enabled and will have
+multiple different storages in the future.
+
+Currently only file storage is implemented and usable.
+
 Configuration Reference
 -----------------------
 
 .. code-block:: yaml
-
     task:
-        storage:              doctrine # One of "array"; "doctrine"
+        storage:                  doctrine # One of "array"; "doctrine"
         adapters:
             doctrine:
-                clear:                true
+                clear:            true
         run:
             mode:                 'off' # One of "off"; "listener"
+        locking:
+            enabled:              false
+            storage:              file # One of "file"
+            ttl:                  600
+            storages:
+                file:
+                    directory:    '%kernel.cache_dir%/tasks'
         system_tasks:
-            enabled:              true
-            handler_class:        ~
-            workload:             null
-            cron_expression:      ~
+
+            # Prototype
+            -
+                enabled:          true
+                handler_class:    ~
+                workload:         null
+                cron_expression:  ~
+
 
 .. _fastcgi_finish_request: http://php.net/manual/en/function.fastcgi-finish-request.php
 .. _PHP FPM: http://php.net/manual/en/install.fpm.php
