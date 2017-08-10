@@ -19,7 +19,7 @@ Installation
 
 .. code-block:: bash
 
-   composer require php-task/task-bundle 1.0.x-dev
+   composer require php-task/task-bundle
 
 Usage
 -----
