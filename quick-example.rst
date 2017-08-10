@@ -38,18 +38,24 @@ This example will assume you want to generate thumbnail images.
         }
     }
 
-    // storage
-    $taskRepository = new Task\Storage\ArrayStorage\ArrayTaskRepository();
-    $taskExecutionRepository = new Task\Storage\ArrayStorage\ArrayTaskExecutionRepository();
-
     // utility
     $eventDispatcher = new Symfony\Component\EventDispatcher\EventDispatcher();
     $taskHandlerFactory = new Task\Handler\TaskHandlerFactory();
+    $executor = new Task\Runner\InlineExecutor($taskHandlerFactory);
     $factory = new Task\Builder\TaskBuilderFactory();
+
+    // locking
+    $storage = new Task\Lock\Storage\FileLockStorage(__DIR__ . '/lock');
+    $lock = new Task\Lock\Lock($storage);
+
+    // storage
+    $taskRepository = new Task\Storage\ArrayStorage\ArrayTaskRepository();
+    $taskExecutionRepository = new Task\Storage\ArrayStorage\ArrayTaskExecutionRepository();
+    $taskExecutionFinder = new \Task\Runner\PendingExecutionFinder($taskExecutionRepository, $taskHandlerFactory, $lock);
 
     // core components
     $scheduler = new Task\Scheduler\TaskScheduler($factory, $taskRepository, $taskExecutionRepository, $eventDispatcher);
-    $runner = new Task\Runner\TaskRunner($taskExecutionRepository, $taskHandlerFactory, $eventDispatcher);
+    $runner = new Task\Runner\TaskRunner($taskExecutionRepository, $taskExecutionFinder, $executor, $eventDispatcher);
 
     // schedule task one
     $scheduler->createTask(

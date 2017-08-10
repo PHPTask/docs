@@ -2,7 +2,7 @@
     "name": "php-task/demo",
     "type": "demo",
     "require": {
-        "php-task/task-bundle": "1.0.x-dev@dev",
+        "php-task/task-bundle": "dev-feature/process-executor",
         "php-task/php-task": "@dev"
     },
     "license": "MIT",
