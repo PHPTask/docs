@@ -35,7 +35,7 @@ class ImageResizeHandler implements Task\Handler\TaskHandlerInterface
 // utility
 $eventDispatcher = new Symfony\Component\EventDispatcher\EventDispatcher();
 $taskHandlerFactory = new Task\Handler\TaskHandlerFactory();
-$executor = new Task\Runner\InlineExecutor($taskHandlerFactory);
+$executor = new Task\Runner\InsideProcessExecutor($taskHandlerFactory);
 $factory = new Task\Builder\TaskBuilderFactory();
 
 // locking
