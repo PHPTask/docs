@@ -92,10 +92,10 @@ Executor
 The executor is a basic service which executes a handler with the workload of a
 task. There are two ways: inline or process. One the  The
 ``InsideProcessExecutor`` calls the handler directly and on the other hand the
-``ProcessExecutor`` uses an own process to isolate each run.
+``SeparateProcessExecutor`` uses an own process to isolate each run.
 
-We recommend using the ``SeparateProcessExecutor`` because there the tasks do not
-influence each other.
+We recommend using the ``SeparateProcessExecutor`` because there the tasks do
+not influence each other.
 
 Configuration Reference
 -----------------------
