@@ -19,7 +19,7 @@ Installation
 
 .. code-block:: bash
 
-   composer require php-task/task-bundle 1.0.x-dev
+   composer require php-task/task-bundle
 
 Usage
 -----
@@ -87,33 +87,47 @@ multiple different storages in the future.
 
 Currently only file storage is implemented and usable.
 
+Executor
+--------
+The executor is a basic service which executes a handler with the workload of a
+task. There are two ways: inline or process. One the  The
+``InsideProcessExecutor`` calls the handler directly and on the other hand the
+``SeparateProcessExecutor`` uses an own process to isolate each run.
+
+We recommend using the ``SeparateProcessExecutor`` because there the tasks do
+not influence each other.
+
 Configuration Reference
 -----------------------
 
 .. code-block:: yaml
+
     task:
-        storage:                  doctrine # One of "array"; "doctrine"
+        storage:                 doctrine # One of "array"; "doctrine"
         adapters:
             doctrine:
-                clear:            true
+                clear:           true
         run:
-            mode:                 'off' # One of "off"; "listener"
+            mode:                'off' # One of "off"; "listener"
         locking:
-            enabled:              false
-            storage:              file # One of "file"
-            ttl:                  600
+            enabled:             false
+            storage:             file # One of "file"
+            ttl:                 600
             storages:
                 file:
-                    directory:    '%kernel.cache_dir%/tasks'
+                    directory:   '%kernel.cache_dir%/tasks'
+        executor:
+            type:                inline # One of "inside"; "separate"
+            separate:
+                console_path:    '%kernel.root_dir%/../bin/console'
         system_tasks:
 
             # Prototype
             -
-                enabled:          true
-                handler_class:    ~
-                workload:         null
-                cron_expression:  ~
-
+                enabled:         true
+                handler_class:   ~
+                workload:        null
+                cron_expression: ~
 
 .. _fastcgi_finish_request: http://php.net/manual/en/function.fastcgi-finish-request.php
 .. _PHP FPM: http://php.net/manual/en/install.fpm.php
