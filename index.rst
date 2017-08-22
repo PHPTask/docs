@@ -31,6 +31,7 @@ Contents
 
     components
     locking
+    retry
     quick-example
     symfony
 
